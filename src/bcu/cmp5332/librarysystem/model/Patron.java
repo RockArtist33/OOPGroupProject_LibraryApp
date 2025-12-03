@@ -11,12 +11,14 @@ public class Patron {
     private int id;
     private String name;
     private String phone;
+    private String email;
     private final List<Book> books = new ArrayList<>();
     
-    public Patron(Integer idValue, String nameValue, String phoneNumber) {
+    public Patron(Integer idValue, String nameValue, String phoneNumber, String emailValue) {
     	this.id = idValue;
     	this.name = nameValue;
     	this.phone = phoneNumber;
+    	this.email = emailValue;
     }
     
     public int getId() {
@@ -29,6 +31,10 @@ public class Patron {
 
 	public String getPhone() {
 		return phone;
+	}
+	
+	public String getEmail() {
+		return email;
 	}
 
 	public List<Book> getBooks() {
