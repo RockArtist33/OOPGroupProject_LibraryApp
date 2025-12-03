@@ -33,10 +33,12 @@ public class CommandParser {
             	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 System.out.print("Name: ");
                 String name = br.readLine();
-                System.out.print("Author: ");
+                System.out.print("Phone Number: ");
                 String phone = br.readLine();
+                System.out.print("Email: ");
+                String email = br.readLine();
                 
-                return new AddPatron(name, phone);
+                return new AddPatron(name, phone, email);
                 
             } else if (cmd.equals("loadgui")) {
                 return new LoadGUI();
@@ -44,7 +46,6 @@ public class CommandParser {
                 if (line.equals("listbooks")) {
                     return new ListBooks();
                 } else if (line.equals("listpatrons")) {
-                     library.
                 } else if (line.equals("help")) {
                     return new Help();
                 }
