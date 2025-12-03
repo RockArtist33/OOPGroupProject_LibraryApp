@@ -2,6 +2,7 @@ package bcu.cmp5332.librarysystem.main;
 
 import bcu.cmp5332.librarysystem.commands.LoadGUI;
 import bcu.cmp5332.librarysystem.commands.ListBooks;
+import bcu.cmp5332.librarysystem.commands.ListPatrons;
 import bcu.cmp5332.librarysystem.commands.AddBook;
 import bcu.cmp5332.librarysystem.commands.AddPatron;
 import bcu.cmp5332.librarysystem.commands.Command;
@@ -46,6 +47,7 @@ public class CommandParser {
                 if (line.equals("listbooks")) {
                     return new ListBooks();
                 } else if (line.equals("listpatrons")) {
+                	return new ListPatrons();
                 } else if (line.equals("help")) {
                     return new Help();
                 }
