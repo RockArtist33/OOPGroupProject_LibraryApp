@@ -1,5 +1,6 @@
 package bcu.cmp5332.librarysystem.model;
 
+import bcu.cmp5332.librarysystem.main.InvalidDateException;
 import bcu.cmp5332.librarysystem.main.LibraryException;
 import java.time.LocalDate;
 
@@ -65,17 +66,25 @@ public class Book {
     }
     
     public String getStatus() {
-        // TODO: implementation here
-        return null;
+        if (loan != null) {
+        	return "Out on loan.";
+        }
+        return "In library.";
     }
 
     public LocalDate getDueDate() {
-        // TODO: implementation here
+        if (loan != null) {
+        	return loan.getDueDate();
+        }  
         return null;
     }
     
-    public void setDueDate(LocalDate dueDate) throws LibraryException {
-        // TODO: implementation here
+    public void setDueDate(LocalDate dueDate) throws LibraryException, InvalidDateException {
+    	if (loan.getStartDate().isAfter(dueDate)) {
+    		throw new InvalidDateException("Due date cannot be before Start date");
+    	}
+    	
+    	loan.setDueDate(dueDate);
     }
 
     public Loan getLoan() {

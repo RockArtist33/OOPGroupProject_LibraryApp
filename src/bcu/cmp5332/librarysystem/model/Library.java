@@ -17,6 +17,11 @@ public class Library {
         List<Book> out = new ArrayList<>(books.values());
         return Collections.unmodifiableList(out);
     }
+    
+    public List<Patron> getPatrons() {
+    	List<Patron> out = new ArrayList<>(patrons.values());
+    	return Collections.unmodifiableList(out);
+    }
 
     public Book getBookByID(int id) throws LibraryException {
         if (!books.containsKey(id)) {
