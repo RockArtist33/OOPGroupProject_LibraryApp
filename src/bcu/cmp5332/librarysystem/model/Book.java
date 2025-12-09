@@ -11,7 +11,7 @@ public class Book {
     private String author;
     private String publicationYear;
 
-    private Loan loan;
+    private Loan loan = null;
 
     public Book(int id, String title, String author, String publicationYear) {
         this.id = id;
@@ -70,7 +70,7 @@ public class Book {
         }
         return "In library.";
     }
-
+    
     public LocalDate getDueDate() {
         if (loan != null) {
         	return loan.getDueDate();
@@ -96,5 +96,34 @@ public class Book {
 
     public void returnToLibrary() {
         loan = null;
+    }
+    
+    /**<p>
+     * Turns a {@link String} into a book object, Used when loading and saving {@link Book} Objects
+     * <p> 
+     * <blockquote><pre>
+     * {@link String} format
+     * |  Book ID | Book Title | Book Author | Book Publication Year |
+     * |    00    ;  The Book  ;    Author   ;          1999         ;
+     * <blockquote>
+     * 
+     */
+    public static Book parse(String bookString) {
+    	String[] bookProperties = bookString.split(";;");
+    	Integer id = Integer.parseInt(bookProperties[0]);
+    	String title = bookProperties[1];
+    	String author = bookProperties[2];
+    	String publicationYear = bookProperties[3];
+    	Book book = new Book(id, title, author, publicationYear);
+    	return book;
+    }
+    
+    public String toString() {
+    	String INTERNALSEPARATOR = "::";
+    	String bookString = id + INTERNALSEPARATOR +
+    						title + INTERNALSEPARATOR +
+    						author + INTERNALSEPARATOR +
+    						publicationYear + INTERNALSEPARATOR;
+    	return bookString;
     }
 }

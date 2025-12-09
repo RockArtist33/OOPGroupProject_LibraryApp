@@ -7,6 +7,7 @@ import java.io.IOException;
 public interface DataManager {
     
     public static final String SEPARATOR = "::";
+    public static final String INTERNALSEPARATOR = ";;";
     
     public void loadData(Library library) throws IOException, LibraryException;
     public void storeData(Library library) throws IOException;

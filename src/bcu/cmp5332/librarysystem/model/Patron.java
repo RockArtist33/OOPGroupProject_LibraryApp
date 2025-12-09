@@ -1,6 +1,7 @@
 package bcu.cmp5332.librarysystem.model;
 
 import bcu.cmp5332.librarysystem.main.InvalidDateException;
+
 import bcu.cmp5332.librarysystem.main.LibraryException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -61,6 +62,34 @@ public class Patron {
     
     public void addBook(Book book) {
         // TODO: implementation here
+    }
+    /**<p>
+     * Turns a {@link String} into a {@link Patron} object, Used when loading and saving {@link Patron} Objects
+     * <p> 
+     * <blockquote><pre>
+     * {@link String} format
+     * |  Patron ID | Patron Name | Patron Phone Number | Patron email |
+     * |     00     |  John Smith |        Author       |     1999     |
+     * <blockquote>
+     * 
+     */
+    // Patron String: 00;name;;01234567890;test@example.com;;
+    public static Patron parse(String patronString) {
+    	String[] patronProperties = patronString.split(";");
+    	Integer id = Integer.parseInt(patronProperties[0]);
+    	String name = patronProperties[1];
+    	String phoneNumber = patronProperties[2];
+    	String email = patronProperties[3];
+    	return new Patron(id, name, phoneNumber, email);
+    }
+    
+    public String toString() {
+    	String INTERNALSEPARATOR = "::";
+    	String patronString = id + INTERNALSEPARATOR + 
+    						name + INTERNALSEPARATOR + 
+    						phone + INTERNALSEPARATOR + 
+    						email + INTERNALSEPARATOR;
+    	return patronString;
     }
 
 
