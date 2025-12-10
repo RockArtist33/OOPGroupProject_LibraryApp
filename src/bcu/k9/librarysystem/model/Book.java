@@ -1,8 +1,9 @@
-package bcu.cmp5332.librarysystem.model;
+package bcu.k9.librarysystem.model;
 
-import bcu.cmp5332.librarysystem.main.InvalidDateException;
-import bcu.cmp5332.librarysystem.main.LibraryException;
 import java.time.LocalDate;
+
+import bcu.k9.librarysystem.main.InvalidDateException;
+import bcu.k9.librarysystem.main.LibraryException;
 
 /**
  * The Book class models a book inside of a library. The class has 6 variables, 5 of which are required to construct an instance. They are as follows:

@@ -1,16 +1,17 @@
-package bcu.cmp5332.librarysystem.main;
+package bcu.k9.librarysystem.main;
 
-import bcu.cmp5332.librarysystem.commands.LoadGUI;
-import bcu.cmp5332.librarysystem.commands.ListBooks;
-import bcu.cmp5332.librarysystem.commands.ListPatrons;
-import bcu.cmp5332.librarysystem.commands.AddBook;
-import bcu.cmp5332.librarysystem.commands.AddPatron;
-import bcu.cmp5332.librarysystem.commands.Command;
-import bcu.cmp5332.librarysystem.commands.Help;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
+
+import bcu.k9.librarysystem.commands.AddBook;
+import bcu.k9.librarysystem.commands.AddPatron;
+import bcu.k9.librarysystem.commands.Command;
+import bcu.k9.librarysystem.commands.Help;
+import bcu.k9.librarysystem.commands.ListBooks;
+import bcu.k9.librarysystem.commands.ListPatrons;
+import bcu.k9.librarysystem.commands.LoadGUI;
 
 public class CommandParser {
     
@@ -26,10 +27,12 @@ public class CommandParser {
                 String title = br.readLine();
                 System.out.print("Author: ");
                 String author = br.readLine();
+                System.out.print("Publisher: ");
+                String publisher = br.readLine();
                 System.out.print("Publication Year: ");
                 String publicationYear = br.readLine();
                 
-                return new AddBook(title, author, publicationYear);
+                return new AddBook(title, author, publisher, publicationYear);
             } else if (cmd.equals("addpatron")) {
             	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
                 System.out.print("Name: ");

@@ -1,8 +1,8 @@
-package bcu.cmp5332.librarysystem.commands;
-
-import bcu.cmp5332.librarysystem.model.Library;
+package bcu.k9.librarysystem.commands;
 
 import java.time.LocalDate;
+
+import bcu.k9.librarysystem.model.Library;
 
 public class Help implements Command {
 
