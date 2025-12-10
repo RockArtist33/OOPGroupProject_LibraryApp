@@ -1,10 +1,10 @@
-package bcu.cmp5332.librarysystem.model;
+package bcu.k9.librarysystem.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import bcu.cmp5332.librarysystem.main.InvalidDateException;
-import bcu.cmp5332.librarysystem.main.LibraryException;
+import bcu.k9.librarysystem.main.InvalidDateException;
+import bcu.k9.librarysystem.main.LibraryException;
 
 /**
  * The Loan class models a Loan of a {@link Book} for a {@link Patron}. The class has 6 variables, 5 of which are required to construct an instance. They are as follows:

@@ -1,7 +1,5 @@
-package bcu.cmp5332.librarysystem.gui;
+package bcu.k9.librarysystem.gui;
 
-import bcu.cmp5332.librarysystem.model.Book;
-import bcu.cmp5332.librarysystem.model.Library;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -12,6 +10,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
+
+import bcu.k9.librarysystem.model.Book;
+import bcu.k9.librarysystem.model.Library;
 
 public class MainWindow extends JFrame implements ActionListener {
 
