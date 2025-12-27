@@ -1,12 +1,13 @@
 package bcu.k9.librarysystem.model;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import bcu.k9.librarysystem.main.InvalidDateException;
 import bcu.k9.librarysystem.main.LibraryException;
 
 /**
- * The Book class models a book inside of a library. The class has 6 variables, 5 of which are required to construct an instance. They are as follows:
+ * The Book class models a book inside of a library. The class has 7 variables, 6 of which are required to construct an instance. They are as follows:
  * <ul>
  * 		<li>
  * 			<p>id: {@link Integer} (required) - The primary key for each instance of the class. Used to search for specific instances.</p>
@@ -26,6 +27,9 @@ import bcu.k9.librarysystem.main.LibraryException;
  * 		<li>
  * 			<p>loan: {@link Loan} - An internal variable used to point to the loan that the book is currently a part of.</p>
  * 		</li>
+ * 		<li>
+ * 			<p>deleted: {@link Boolean} - An internal variable used to determine deleted status.</p>
+ * 		</li>
  * </ul>
  * It is important to remember that whilst the Book class has functionality to change the due date
  * of the loan that it is currently a part of, you should instead fetch the loan object and change
@@ -41,7 +45,7 @@ public class Book {
     private String author;
     private String publisher;
     private String publicationYear;
-
+    private Boolean deleted = false;
     private Loan loan = null;
     
     /**
@@ -67,6 +71,7 @@ public class Book {
     public int getId() {
         return id;
     } 
+    
     /** Set the book's id.
      * This function should only be used in emergency situations. 
      * @param id - The Id of the book
@@ -74,12 +79,14 @@ public class Book {
     public void setId(int id) {
         this.id = id;
     }
+    
     /** Get the book's title. 
      * @return The title of the book
      */
     public String getTitle() {
         return title;
     }
+    
     /** Set the book's title. 
      *
      * @param title - The title of the book.
@@ -87,42 +94,63 @@ public class Book {
     public void setTitle(String title) {
         this.title = title;
     }
+    
     /** Get the book's author. 
      * @return The author of the book
      */
     public String getAuthor() {
         return author;
     }
+    
     /** Set the book's author. 
      * @param author - The author of the book 
      */
     public void setAuthor(String author) {
         this.author = author;
     }
+    
+    /** Gets the book's publisher
+     *  @return The publisher of the Book
+     */
+    public String getPublisher() {
+    	return publisher;
+    }
+    
+    /** Sets the book's publisher
+     * @param publisher - the publisher of the book
+     */
+    public void setPublisher(String publisher) {
+    	this.publisher = publisher;
+    }
+    
     /** Get the book's publication year. 
      * @return The publication year of the book 
      */
     public String getPublicationYear() {
         return publicationYear;
     }
+    
     /** Set the book's publication year. 
      * @param publicationYear - Sets the publication year of the book. 
      */
     public void setPublicationYear(String publicationYear) {
         this.publicationYear = publicationYear;
     }
+    
     /** Get short description for the book. 
      * @return A short description of the book containing the book ID, title.  
      */
     public String getDetailsShort() {
         return "Book #" + id + " - " + title;
     }
+    
     /** Get detailed info for the book. 
      * @return A complete description containing the title, author, publisher and publication year of the book. 
      */
     public String getDetailsLong() {
         return "Book #" + id + ",\nTitle: "+ title +",\nAuthor: "+ author + ",\nPublished By "+ publisher +",\nPublished in "+ publicationYear+".";
     }
+    
     /** Check if the book is on loan. 
      * The function checks if the book has a Loan associated with it and returns the results.
      * @return true if the book is on loan and false if the book is available
@@ -130,6 +158,7 @@ public class Book {
     public boolean isOnLoan() {
         return (loan != null);
     }
+    
     /** Get the book status. 
      * The function returns "On loan" if the book is on loan and "Available" if the book is available.
      * @return A string representing the status of the book.
@@ -140,6 +169,7 @@ public class Book {
         }
         return "In library.";
     }
+    
     /** Get the due date of a book that is on loan. 
      * @return the due date of the loan.
      */
@@ -149,6 +179,7 @@ public class Book {
         }  
         return null;
     }
+    
     /** Set the due date of a book. 
      * @param - The new due date of the loan
      */
@@ -159,21 +190,49 @@ public class Book {
     	
     	loan.setDueDate(dueDate);
     }
+    
     /** Get the book's Loan object that holds information about a book that is on loan. 
      * @return returns the pointer to the loan.
      */
     public Loan getLoan() {
         return loan;
     }
+    
     /** Sets the loan parameter to a new Loan object referencing this class.
      * @param loan - The pointer to a new Loan object
      */
     public void setLoan(Loan loan) {
         this.loan = loan;
     }
+    
+    /** Retrieves the deleted status of the Book
+     * 	This function retrieves the deleted status of the book
+     *  @return true if it is deleted, false if otherwise
+     */
+    public Boolean getDeleteStatus() {
+    	return this.deleted;
+    }
+    
+    /** Sets the deleted flag to true
+     *  This function sets the deleted flag to true, hiding it from the user until it is undeleted
+     */
+    
+    public void delete() {
+    	this.deleted = true;
+    }
+    
+    /** Sets the deleted flag to true
+     *  This function sets the deleted flag to false, showing it from the user until it is deleted
+     */
+    
+    public void unDelete() {
+    	this.deleted = false;
+    }
+    
     /** Return the book to the library. 
      * This function is used to unset any loan information that exists for the book. 
      */
+    
     public void returnToLibrary() {
         loan = null;
     }
@@ -194,13 +253,16 @@ public class Book {
      * @return A book object matching the string representation
      */
     public static Book parse(String bookString) {
-    	String[] bookProperties = bookString.split(";;");
+    	String[] bookProperties = bookString.split("::");
     	Integer id = Integer.parseInt(bookProperties[0]);
     	String title = bookProperties[1];
     	String author = bookProperties[2];
     	String publisher = bookProperties[3];
     	String publicationYear = bookProperties[4];
     	Book book = new Book(id, title, author, publisher, publicationYear);
+    	if (Objects.equals(bookProperties[5], "true")) {
+    		book.delete();
+    	}
     	return book;
     }
     
@@ -225,7 +287,8 @@ public class Book {
     						title + SEPARATOR +
     						author + SEPARATOR +
     						publisher + SEPARATOR +
-    						publicationYear + SEPARATOR;
+    						publicationYear + SEPARATOR +
+    						deleted.toString() + SEPARATOR;
     	return bookString;
     }
 }

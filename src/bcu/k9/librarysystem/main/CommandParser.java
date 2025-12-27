@@ -3,15 +3,12 @@ package bcu.k9.librarysystem.main;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.LocalDate;
 import java.util.*;
 
-import bcu.k9.librarysystem.commands.AddBook;
-import bcu.k9.librarysystem.commands.AddPatron;
-import bcu.k9.librarysystem.commands.Command;
-import bcu.k9.librarysystem.commands.Help;
-import bcu.k9.librarysystem.commands.ListBooks;
-import bcu.k9.librarysystem.commands.ListPatrons;
-import bcu.k9.librarysystem.commands.LoadGUI;
+
+import bcu.k9.librarysystem.commands.*;
+import bcu.k9.librarysystem.data.LibraryData;
 
 public class CommandParser {
     
@@ -58,20 +55,48 @@ public class CommandParser {
                 int id = Integer.parseInt(parts[1]);
 
                 if (cmd.equals("showbook")) {
+                	return new ShowBook(id);
                     
                 } else if (cmd.equals("showpatron")) {
-                    
+                    return new ShowPatron(id);
+                } else if (cmd.equals("deletebook")) {
+                	return new DeleteBook(id);
+                } else if (cmd.equals("deletepatron")) {
+                	return new DeletePatron(id);
                 }
             } else if (parts.length == 3) {
                 int patronID = Integer.parseInt(parts[1]);
                 int bookID = Integer.parseInt(parts[2]);
 
                 if (cmd.equals("borrow")) {
-                    
+                	LocalDate dueDate;
+                	while (true) {
+                		try {
+                			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                			System.out.print("Due Date (YYYY-MM-DD): ");
+                			dueDate = LocalDate.parse(br.readLine());
+                			break;
+                		} catch(Exception e) {
+                			System.out.println("Please Enter a valid Date.");
+                		}
+                	}
+                	return new Borrow(dueDate, bookID, patronID);
                 } else if (cmd.equals("renew")) {
+                	LocalDate dueDate;
+                	while (true) {
+                		try {
+                			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                			System.out.print("Due Date (YYYY-MM-DD): ");
+                			dueDate = LocalDate.parse(br.readLine());
+                			break;
+                		} catch(Exception e) {
+                			System.out.println("Please Enter a valid Date.");
+                		}
+                	}
+                	return new Renew(dueDate, bookID, patronID);
                     
                 } else if (cmd.equals("return")) {
-                    
+                    return new Return(bookID, patronID);
                 }
             }
         } catch (NumberFormatException ex) {

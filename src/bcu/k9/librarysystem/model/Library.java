@@ -9,7 +9,6 @@ public class Library {
     private final int loanPeriod = 7;
     private final Map<Integer, Patron> patrons = new TreeMap<>();
     private final Map<Integer, Book> books = new TreeMap<>();
-    private final Map<Integer, Loan> loans = new TreeMap<>();
 
     public int getLoanPeriod() {
         return loanPeriod;
@@ -24,22 +23,17 @@ public class Library {
     	List<Patron> out = new ArrayList<>(patrons.values());
     	return Collections.unmodifiableList(out);
     }
-    
-    public List<Loan> getLoans() {
-    	List<Loan> out = new ArrayList<>(loans.values());
-    	return Collections.unmodifiableList(out);
-    }
 
     public Book getBookByID(int id) throws LibraryException {
-        if (!books.containsKey(id)) {
+    	if (books.containsKey(id) == false) {
             throw new LibraryException("There is no such book with that ID.");
         }
         return books.get(id);
     }
 
     public Patron getPatronByID(int id) throws LibraryException {
-        if (!books.containsKey(id)) {
-        	throw new LibraryException("There is no such book with that ID.");
+    	if (patrons.containsKey(id) == false) {
+        	throw new LibraryException("There is no such Patron with that ID.");
         }
         return patrons.get(id);
     }
@@ -56,20 +50,6 @@ public class Library {
         	throw new IllegalArgumentException("Duplicate patron ID.");
         }
         patrons.put(patron.getId(), patron);
-    }
-    
-    public void addLoan(Loan loan) {
-    	if (loans.containsKey(loan.getId())) {
-    		throw new IllegalArgumentException("Duplicate loan ID.");
-    	}
-    }
-    
-    public void deleteLoan(Integer loanID) {
-    	if (!loans.containsKey(loanID)) {
-    		throw new IllegalArgumentException("Loan ID not found in library Database.");
-    	}
-    	Loan loan = loans.get(loanID);
-    	loan.completeLoan();
     }
 }
  

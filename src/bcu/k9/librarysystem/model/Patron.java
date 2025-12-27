@@ -2,13 +2,17 @@ package bcu.k9.librarysystem.model;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 import bcu.k9.librarysystem.main.InvalidDateException;
 import bcu.k9.librarysystem.main.LibraryException;
 
 /**
- * The Patron class models a patron of a library. The class has 5 variables, 4 of which are required to construct an instance. They are as follows:
+ * The Patron class models a patron of a library. The class has 6 variables, 4 of which are required to construct an instance. They are as follows:
  * <ul>
  * 		<li>
  * 			<p>id: {@link Integer} (required) - The primary key for each instance of the class. Used to search for specific instances.</p>
@@ -23,7 +27,10 @@ import bcu.k9.librarysystem.main.LibraryException;
  * 			<p>email: {@link String} (required) - The email of the patron.</p>
  * 		</li>
  * 		<li>
- * 			<p>books: {@link ArrayList} of {@link Book}s - An internal list to track the books the user has on loan.</p>
+ * 			<p>books: {@link ArrayList} of {@link Book}s - An internal list to track the books the user has on loan currently.</p>
+ * 		</li>
+ * 		<li>
+ * 			<p>loanHistory: {@link TreeMap} - An internal map used to track all historical loans of a single patron.</p>
  * 		</li>
  * </ul>
  * 
@@ -37,7 +44,9 @@ public class Patron {
     private String name;
     private String phone;
     private String email;
-    private final List<Book> books = new ArrayList<>();
+    private Boolean deleted = false;
+    private List<Book> books = new ArrayList<>();
+    private List<Loan> loanHistory = new ArrayList<>();
     
     /** Create a new Patron instance.
      * The constructor initialises a Patron object using the basic mandatory fields a patron should have to exist in the library.
@@ -108,6 +117,42 @@ public class Patron {
 	public List<Book> getBooks() {
 		return books;
 	}
+	
+	public List<Loan> getLoanHistory() {
+		return loanHistory;
+	}
+	
+	public void setLoanHistory(List<Loan> loanHistory) {
+		if (this.loanHistory.size() == 0) {
+			this.loanHistory = loanHistory; 
+		}
+	}
+	
+	/** Retrieves the deleted status of the Book
+     * 	This function retrieves the deleted status of the book
+     *  @return true if it is deleted, false if otherwise
+     */
+	
+	public Boolean getDeleteStatus() {
+		return this.deleted;
+	}
+	
+	/** Sets the deleted flag to true
+     *  This function sets the deleted flag to true, hiding it from the user until it is undeleted
+     */
+	
+    public void delete() {
+    	this.deleted = true;
+    }
+    
+    /** Sets the deleted flag to true
+     *  This function sets the deleted flag to false, showing it from the user until it is deleted
+     */
+    
+    public void unDelete() {
+    	this.deleted = false;
+    }
+	
     /** Borrow a book from the library.
      *  The method uses a newly created Loan object that associates a book with the patron and updates the book with this loan information. The function also adds the book to the patron's list of borrowed books.
      *  If the book is on loan by another patron, an exception is thrown with a message saying that the book is currently on loan.
@@ -118,10 +163,14 @@ public class Patron {
      * @throws InvalidDateException If the due date is before the start date.
      */
     public void borrowBook(Loan loan, Book book, LocalDate dueDate) throws LibraryException, InvalidDateException {
-    	if (dueDate.isAfter(LocalDate.now())) {
+    	if (LocalDate.now().isAfter(dueDate)) {
     		throw new InvalidDateException("Date is before or equal to the current date.");
     	}
-    	
+    	if (book.getLoan() != null) {
+    		throw new LibraryException("This book is currently on loan.");
+    	}
+    	this.addBook(book);
+    	book.setLoan(loan);
     }
     
     /**
@@ -134,10 +183,17 @@ public class Patron {
      * @throws InvalidDateException If the due date is set before or on the start date.
      */
     public void renewBook(Book book, LocalDate dueDate) throws LibraryException, InvalidDateException {
-    	if (dueDate.isAfter(LocalDate.now())) {
+    	if (LocalDate.now().isAfter(dueDate)) {
     		throw new InvalidDateException("Date is before or equal to the current date.");
     	}
-    	// TODO: implementation here
+    	if (book.getLoan() == null) {
+    		throw new LibraryException("This book is not on loan.");
+    	}
+    	if (!(book.getLoan().getPatron().id == this.id)) {
+    		throw new LibraryException("This book is not on loan to this patron.");
+    	}
+    	
+    	book.getLoan().setDueDate(dueDate);
     }
     
     /** Return a book to the library.
@@ -148,7 +204,14 @@ public class Patron {
      * 
      */
     public void returnBook(Book book) throws LibraryException {
-    	// TODO: implementation here
+    	if (!(book.getLoan().getPatron().id == this.id)) {
+    		throw new LibraryException("This book is not on loan to this patron.");
+    	}
+    	book.getLoan().completeLoan();
+    	this.loanHistory.add(book.getLoan());
+    	book.returnToLibrary();
+    	books.remove(book);
+    	
     }
     
     /** Add a book to the patron's list of borrowed books.
@@ -156,7 +219,7 @@ public class Patron {
      * @param book - the book to be added to the patron's list of borrowed books
      */
     public void addBook(Book book) {
-        // TODO: implementation here
+        this.books.add(book);
     }
     /**<p>
      * Turns a {@link String} into a {@link Patron} object, Used when loading {@link Patron} Objects
@@ -174,12 +237,16 @@ public class Patron {
      * @return A new Patron object matching the string representation.
      */
     public static Patron parse(String patronString) {
-    	String[] patronProperties = patronString.split(";");
+    	String[] patronProperties = patronString.split("::");
     	Integer id = Integer.parseInt(patronProperties[0]);
     	String name = patronProperties[1];
     	String phoneNumber = patronProperties[2];
     	String email = patronProperties[3];
-    	return new Patron(id, name, phoneNumber, email);
+    	Patron patron = new Patron(id, name, phoneNumber, email);
+    	if (Objects.equals(patronProperties[5], "true")) {
+    		patron.delete();
+    	}
+    	return patron;
     }
     
     /**<p>
@@ -190,7 +257,7 @@ public class Patron {
      * +------------+-------------+---------------------+--------------+
      * |  Patron ID | Patron Name | Patron Phone Number | Patron email |
      * +------------+-------------+---------------------+--------------+
-     * |     00     |  John Smith |        Author       |     1999     |
+     * |     00     |  John Smith |     01234 567890    |     1999     |
      * +------------+-------------+---------------------+--------------+
      * </pre>
      * </blockquote>
@@ -198,11 +265,14 @@ public class Patron {
      * @return A String representation of a {@link Patron} object.
      */
     public String toString() {
-    	String INTERNALSEPARATOR = "::";
-    	String patronString = id + INTERNALSEPARATOR + 
-    						name + INTERNALSEPARATOR + 
-    						phone + INTERNALSEPARATOR + 
-    						email + INTERNALSEPARATOR;
+    	String SEPARATOR = "::";
+    	String patronString = id + SEPARATOR + 
+    						name + SEPARATOR + 
+    						phone + SEPARATOR + 
+    						email + SEPARATOR +
+    						loanHistory.toString() + SEPARATOR +
+    						deleted.toString() + SEPARATOR;
+    	
     	return patronString;
     }
 

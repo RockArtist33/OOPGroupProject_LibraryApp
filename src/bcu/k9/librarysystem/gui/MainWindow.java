@@ -2,8 +2,14 @@ package bcu.k9.librarysystem.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -11,8 +17,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 
+import bcu.k9.librarysystem.data.LibraryData;
 import bcu.k9.librarysystem.model.Book;
 import bcu.k9.librarysystem.model.Library;
+import bcu.k9.librarysystem.model.Patron;
 
 public class MainWindow extends JFrame implements ActionListener {
 
@@ -126,6 +134,12 @@ public class MainWindow extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent ae) {
 
         if (ae.getSource() == adminExit) {
+        	try {
+				LibraryData.store(library);
+			} catch (IOException e) {
+				System.out.println("Failed to save, closing...");
+				e.printStackTrace();
+			}
             System.exit(0);
         } else if (ae.getSource() == booksView) {
             displayBooks();
@@ -134,7 +148,7 @@ public class MainWindow extends JFrame implements ActionListener {
             new AddBookWindow(this);
             
         } else if (ae.getSource() == booksDel) {
-            
+            deleteBook();
             
         } else if (ae.getSource() == booksIssue) {
             
@@ -143,16 +157,17 @@ public class MainWindow extends JFrame implements ActionListener {
             
             
         } else if (ae.getSource() == memView) {
-            
+            displayPatrons();
             
         } else if (ae.getSource() == memAdd) {
-            
+            new AddPatronWindow(this);
             
         } else if (ae.getSource() == memDel) {
-            
+            deletePatron();
             
         }
     }
+    
 
     public void displayBooks() {
         List<Book> booksList = library.getBooks();
@@ -162,15 +177,128 @@ public class MainWindow extends JFrame implements ActionListener {
         Object[][] data = new Object[booksList.size()][6];
         for (int i = 0; i < booksList.size(); i++) {
             Book book = booksList.get(i);
-            data[i][0] = book.getTitle();
-            data[i][1] = book.getAuthor();
-            data[i][2] = book.getPublicationYear();
-            data[i][3] = book.getStatus();
+            if (book.getDeleteStatus() == false) {            	
+            	data[i][0] = book.getTitle();
+            	data[i][1] = book.getAuthor();
+            	data[i][2] = book.getPublicationYear();
+            	data[i][3] = book.getStatus();
+            }
         }
 
         JTable table = new JTable(data, columns);
+        table.setCellSelectionEnabled(true);
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		openBookInfoWindow(table.getSelectedRow());
+        	}
+        });
         this.getContentPane().removeAll();
         this.getContentPane().add(new JScrollPane(table));
         this.revalidate();
     }	
+    public void displayPatrons() {
+        List<Patron> patronsList = library.getPatrons();
+        // headers for the table
+        String[] columns = new String[]{"Name", "Email", "Phone Number", "Books on loan"};
+
+        Object[][] data = new Object[patronsList.size()][6];
+        for (int i = 0; i < patronsList.size(); i++) {
+            Patron patron = patronsList.get(i);
+            if (patron.getDeleteStatus() == false) {            	
+            	data[i][0] = patron.getName();
+            	data[i][1] = patron.getEmail();
+            	data[i][2] = patron.getPhone();
+            	data[i][3] = patron.getBooks().size();
+            }
+        }
+
+        JTable table = new JTable(data, columns);
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		openPatronInfoWindow(table.getSelectedRow());
+        	}
+        });
+        this.getContentPane().removeAll();
+        this.getContentPane().add(new JScrollPane(table));
+        this.revalidate();
+    }
+    
+    public void deletePatron() {
+        List<Patron> patronsList = library.getPatrons();
+        this.setTitle("Select Patron to delete");
+        // headers for the table
+        String[] columns = new String[]{"Name", "Email", "Phone Number", "Books on loan"};
+
+        Object[][] data = new Object[patronsList.size()][6];
+        for (int i = 0; i < patronsList.size(); i++) {
+            Patron patron = patronsList.get(i);
+            if (patron.getDeleteStatus() == false) {            	
+            	data[i][0] = patron.getName();
+            	data[i][1] = patron.getEmail();
+            	data[i][2] = patron.getPhone();
+            	data[i][3] = patron.getBooks().size();
+            }
+        }
+        
+        JTable table = new JTable(data, columns);
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		openDeletePatronWindow(table.getSelectedRow());
+        	}
+        });
+        this.getContentPane().removeAll();
+        this.getContentPane().add(new JScrollPane(table));
+        this.revalidate();
+    }
+    
+    public void deleteBook() {
+        List<Book> booksList = library.getBooks();
+        this.setTitle("Select Book to delete");
+        // headers for the table
+        String[] columns = new String[]{"Name", "Email", "Phone Number", "Books on loan"};
+
+        Object[][] data = new Object[booksList.size()][6];
+        for (int i = 0; i < booksList.size(); i++) {
+            Book book = booksList.get(i);
+            if (book.getDeleteStatus() == false) {            	
+            	data[i][0] = book.getTitle();
+            	data[i][1] = book.getAuthor();
+            	data[i][2] = book.getPublicationYear();
+            	data[i][3] = book.getStatus();
+            }
+        }
+        
+        JTable table = new JTable(data, columns);
+        table.addMouseListener(new MouseAdapter() {
+        	public void mouseClicked(MouseEvent e) {
+        		openDeleteBookWindow(table.getSelectedRow());
+        	}
+        });
+        this.getContentPane().removeAll();
+        this.getContentPane().add(new JScrollPane(table));
+        this.revalidate();
+    }
+    
+    public void openBookInfoWindow(Integer index) {
+    	if (library.getBooks().get(index).getDeleteStatus() == false) {
+    		new BookInformationWindow(this, library.getBooks().get(index));    		
+    	}
+    }
+    public void openPatronInfoWindow(Integer index) {
+    	if (library.getPatrons().get(index).getDeleteStatus() == false) {
+    		new PatronInformationWindow(this, library.getPatrons().get(index));
+    	}
+    }
+    public void openDeletePatronWindow(Integer index) {
+    	if (library.getPatrons().get(index).getDeleteStatus() == false) {
+    		new DeletePatronWindow(this, library.getPatrons().get(index));
+    	}
+    	setTitle("Library Management System");
+    }
+    public void openDeleteBookWindow(Integer index) {
+    	if (library.getBooks().get(index).getDeleteStatus() == false) {
+    		new DeleteBookWindow(this, library.getBooks().get(index));
+    	}
+    	setTitle("Library Management System");
+    }
 }
