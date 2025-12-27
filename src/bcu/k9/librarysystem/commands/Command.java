@@ -1,5 +1,6 @@
 package bcu.k9.librarysystem.commands;
 
+import bcu.k9.librarysystem.main.InvalidDateException;
 import bcu.k9.librarysystem.main.LibraryException;
 import bcu.k9.librarysystem.model.Library;
 
@@ -14,6 +15,8 @@ public interface Command {
             + "\taddpatron                       add a new patron\n"
             + "\tshowbook                        show book details\n"
             + "\tshowpatron                      show patron details\n"
+            + "\tdeletebook                    delete a book\n"
+            + "\tdeletepatron                    delete a patron\n"
             + "\tborrow                          borrow a book\n"
             + "\trenew                           renew a book\n"
             + "\treturn                          return a book\n"
@@ -22,7 +25,7 @@ public interface Command {
             + "\texit                            exits the program*";
 
     
-    public void execute(Library library, LocalDate currentDate) throws LibraryException;
+    public void execute(Library library, LocalDate currentDate) throws LibraryException, InvalidDateException;
     
 }
  

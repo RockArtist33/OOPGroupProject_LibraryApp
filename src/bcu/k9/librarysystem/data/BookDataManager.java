@@ -36,9 +36,9 @@ public class BookDataManager implements DataManager {
     @Override
     public void storeData(Library library) throws IOException {
         try (PrintWriter out = new PrintWriter(new FileWriter(RESOURCE))) {
-            for (Book book : library.getBooks()) {
+        	SaveFileHandler.clearFile(RESOURCE);
+        	for (Book book : library.getBooks()) {
                 String line = book.toString();
-                SaveFileHandler.clearFile(RESOURCE);
                 SaveFileHandler.writeStringToFile(line, RESOURCE);
             }
         }

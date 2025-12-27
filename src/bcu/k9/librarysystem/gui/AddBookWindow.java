@@ -45,7 +45,7 @@ public class AddBookWindow extends JFrame implements ActionListener {
 
         } 
 
-        setTitle("Add a New Book");
+        setTitle("Book Information");
 
         setSize(300, 200);
         JPanel topPanel = new JPanel();
@@ -99,7 +99,7 @@ public class AddBookWindow extends JFrame implements ActionListener {
             mw.displayBooks();
             // hide (close) the AddBookWindow
             this.setVisible(false);
-        } catch (LibraryException ex) {
+        } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex, "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

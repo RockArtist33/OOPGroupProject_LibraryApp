@@ -35,7 +35,6 @@ import bcu.k9.librarysystem.main.LibraryException;
  */
 public class Loan {
     
-	private Integer id;
     private Patron patron;
     private Book book;
     private LocalDate startDate;
@@ -51,8 +50,7 @@ public class Loan {
 	 *@param startDate - the start date of the loan as {@link LocalDate}.
 	 *@param dueDate - the due date of the loan as {@link LocalDate}.
 	 */
-    public Loan(Integer id, Patron patron, Book book, LocalDate startDate, LocalDate dueDate) {
-    	this.id = id;
+    public Loan(Patron patron, Book book, LocalDate startDate, LocalDate dueDate) {
         this.patron = patron;
         this.book = book;
         this.startDate = startDate;
@@ -60,12 +58,6 @@ public class Loan {
         this.completed = false;
     }
     
-    /** Gets the ID of the loan.
-     * @return The ID of the loan.
-     */
-    public Integer getId() {
-		return id;
-	}
     /** Get the loan's {@link Patron} object.
      * Get the patron associated with the loan.
      * @return the loan's patron.
@@ -159,15 +151,14 @@ public class Loan {
      * @return A new {@link Loan} object matching the string representation.
      */
 	public static Loan parse(Library library, String loanString) throws NumberFormatException, LibraryException {
-		String SEPARATOR = "::";
+		String SEPARATOR = ";;";
 		String[] properties = loanString.split(SEPARATOR);
 		
-		int id = Integer.parseInt(properties[0]);
-        Patron patron = library.getPatronByID(Integer.parseInt(properties[1]));
-        Book book = library.getBookByID(Integer.parseInt(properties[2]));
-        LocalDate startDate = LocalDate.parse(properties[3]);
-        LocalDate endDate = LocalDate.parse(properties[4]);
-        return new Loan(id, patron, book, startDate, endDate);
+        Patron patron = library.getPatronByID(Integer.parseInt(properties[0]));
+        Book book = library.getBookByID(Integer.parseInt(properties[1]));
+        LocalDate startDate = LocalDate.parse(properties[2]);
+        LocalDate endDate = LocalDate.parse(properties[3]);
+        return new Loan(patron, book, startDate, endDate);
 	}
 	
 	/**<p>
@@ -185,9 +176,8 @@ public class Loan {
      * @return A string representation of a {@link Loan} object.
      */
 	public String toString() {
-		String SEPARATOR = "::";
-		String loanString = id + SEPARATOR +
-							patron.getId() + SEPARATOR + 
+		String SEPARATOR = ";;";
+		String loanString = patron.getId() + SEPARATOR + 
 							book.getId() + SEPARATOR +
 							startDate.toString() + SEPARATOR +
 							dueDate.toString() + SEPARATOR +

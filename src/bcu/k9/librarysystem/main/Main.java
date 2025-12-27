@@ -26,9 +26,11 @@ public class Main {
 
             try {
                 Command command = CommandParser.parse(line);
-                command.execute(library, LocalDate.now());                
-            } catch (LibraryException ex) {
+                command.execute(library, LocalDate.now());  
+                LibraryData.store(library);
+            } catch (Exception ex) {
                 System.out.println(ex.getMessage());
+                ex.printStackTrace();
             }
         }
         LibraryData.store(library);

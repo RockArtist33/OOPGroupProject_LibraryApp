@@ -25,6 +25,7 @@ public class LibraryData {
         loadData() and storeData() methods is complete */
         dataManagers.add(new PatronDataManager());
         dataManagers.add(new LoanDataManager());
+        dataManagers.add(new LoanHistoryDataManager());
     }
     /**Load data from all data managers to the library.
      * This static method iterates through the list of data managers and runs their implementation of the DataManager.loadData(Library) method to load data for all the entities from the file storage to a Library object.
