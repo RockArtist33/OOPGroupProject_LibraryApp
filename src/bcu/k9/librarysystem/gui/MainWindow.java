@@ -35,6 +35,7 @@ public class MainWindow extends JFrame implements ActionListener {
     private JMenuItem booksAdd;
     private JMenuItem booksDel;	
     private JMenuItem booksIssue;
+    private JMenuItem booksRenew;
     private JMenuItem booksReturn;
 
     private JMenuItem memView;
@@ -85,11 +86,13 @@ public class MainWindow extends JFrame implements ActionListener {
         booksAdd = new JMenuItem("Add");
         booksDel = new JMenuItem("Delete");
         booksIssue = new JMenuItem("Issue");
+        booksRenew = new JMenuItem("Renew");
         booksReturn = new JMenuItem("Return");
         booksMenu.add(booksView);
         booksMenu.add(booksAdd);
         booksMenu.add(booksDel);
         booksMenu.add(booksIssue);
+        booksMenu.add(booksRenew);
         booksMenu.add(booksReturn);
         for (int i = 0; i < booksMenu.getItemCount(); i++) {
             booksMenu.getItem(i).addActionListener(this);
@@ -151,10 +154,13 @@ public class MainWindow extends JFrame implements ActionListener {
             deleteBook();
             
         } else if (ae.getSource() == booksIssue) {
+            new IssueBookWindow(this);
             
+        } else if (ae.getSource() == booksRenew) {
+            new RenewBookWindow(this);
             
         } else if (ae.getSource() == booksReturn) {
-            
+            new ReturnBookWindow(this);
             
         } else if (ae.getSource() == memView) {
             displayPatrons();

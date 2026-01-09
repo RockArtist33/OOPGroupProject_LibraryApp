@@ -1,13 +1,18 @@
-package bcu.cmp5332.librarysystem.gui;
+package bcu.k9.librarysystem.gui;
 
-import bcu.cmp5332.librarysystem.main.LibraryException;
-import bcu.cmp5332.librarysystem.model.Book;
-import bcu.cmp5332.librarysystem.model.Patron;
+import bcu.k9.librarysystem.commands.Command;
+import bcu.k9.librarysystem.commands.Renew;
+import bcu.k9.librarysystem.commands.Return;
+import bcu.k9.librarysystem.main.InvalidDateException;
+import bcu.k9.librarysystem.main.LibraryException;
+import bcu.k9.librarysystem.model.Book;
+import bcu.k9.librarysystem.model.Patron;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -111,7 +116,12 @@ public class ReturnBookWindow extends JFrame implements ActionListener {
             int patronId = patronIds.get(patronIndex);
             int bookId = bookIds.get(bookIndex);
 
-            mw.getLibrary().returnBook(bookId, patronId);
+            Command returnCommand = new Return(bookId, patronId);
+            try {
+				returnCommand.execute(mw.getLibrary(), LocalDate.now());
+			} catch (InvalidDateException e) {
+				e.printStackTrace();
+			}
 
             mw.displayBooks();
             JOptionPane.showMessageDialog(this, "Returned successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);

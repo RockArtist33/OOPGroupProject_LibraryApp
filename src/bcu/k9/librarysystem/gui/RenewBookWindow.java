@@ -1,8 +1,11 @@
-package bcu.cmp5332.librarysystem.gui;
+package bcu.k9.librarysystem.gui;
 
-import bcu.cmp5332.librarysystem.main.InvalidDateException;
-import bcu.cmp5332.librarysystem.main.LibraryException;
-import bcu.cmp5332.librarysystem.model.Book;
+import bcu.k9.librarysystem.commands.Borrow;
+import bcu.k9.librarysystem.commands.Command;
+import bcu.k9.librarysystem.commands.Renew;
+import bcu.k9.librarysystem.main.InvalidDateException;
+import bcu.k9.librarysystem.main.LibraryException;
+import bcu.k9.librarysystem.model.Book;
 
 import javax.swing.*;
 import java.awt.*;
@@ -135,7 +138,9 @@ public class RenewBookWindow extends JFrame implements ActionListener {
             }
 
             int bookId = bookIds.get(bookIndex);
-            mw.getLibrary().renewBook(bookId, selectedNewDue);
+            int patronId = mw.getLibrary().getBookByID(bookId).getLoan().getPatron().getId();
+            Command renew = new Renew(selectedNewDue, bookId, patronId);
+            renew.execute(mw.getLibrary(), LocalDate.now());
 
             mw.displayBooks();
             JOptionPane.showMessageDialog(this, "Renewed successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);

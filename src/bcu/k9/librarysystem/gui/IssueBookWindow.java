@@ -1,9 +1,13 @@
-package bcu.cmp5332.librarysystem.gui;
+package bcu.k9.librarysystem.gui;
 
-import bcu.cmp5332.librarysystem.main.InvalidDateException;
-import bcu.cmp5332.librarysystem.main.LibraryException;
-import bcu.cmp5332.librarysystem.model.Book;
-import bcu.cmp5332.librarysystem.model.Patron;
+import bcu.k9.librarysystem.commands.Borrow;
+import bcu.k9.librarysystem.commands.Command;
+import bcu.k9.librarysystem.commands.Renew;
+import bcu.k9.librarysystem.main.InvalidDateException;
+import bcu.k9.librarysystem.main.LibraryException;
+import bcu.k9.librarysystem.model.Book;
+import bcu.k9.librarysystem.model.Loan;
+import bcu.k9.librarysystem.model.Patron;
 
 import javax.swing.*;
 import java.awt.*;
@@ -158,8 +162,8 @@ public class IssueBookWindow extends JFrame implements ActionListener {
 
             int patronId = patronIds.get(patronIndex);
             int bookId = bookIds.get(bookIndex);
-
-            mw.getLibrary().issueBook(bookId, patronId, selectedDueDate);
+            Command borrow = new Borrow(selectedDueDate, bookId, patronId);
+            borrow.execute(mw.getLibrary(), LocalDate.now());
 
             mw.displayBooks();
             JOptionPane.showMessageDialog(this, "Issued successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
